@@ -1,9 +1,7 @@
 import sys
 import os
 import cv2
-import random
 import matplotlib.pyplot as plt
-import numpy as np
 import tensorflow as tf
 from PyQt5.QtGui import QPixmap, QPainter
 from PyQt5.QtCore import Qt
@@ -63,27 +61,27 @@ class MainWindow(QDialog):
         x_train /= 255
         x_test /= 255
 
-        '''
-        # -------------------------- CREATE MODEL ------------------------------
+        if not os.path.exists(os.path.join(os.getcwd(), "Awesome first try")):
+            # -------------------------- CREATE MODEL ------------------------------
 
-        model = Sequential()
-        model.add(Conv2D(28, kernel_size=(3,3), input_shape=input_shape))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Flatten()) # Flattening the 2D arrays for fully connected layers
-        model.add(Dense(128, activation=tf.nn.relu))
-        model.add(Dropout(0.2))
-        model.add(Dense(10,activation=tf.nn.softmax))
+            model = Sequential()
+            model.add(Conv2D(28, kernel_size=(3,3), input_shape=input_shape))
+            model.add(MaxPooling2D(pool_size=(2, 2)))
+            # Flattening the 2D arrays for fully connected layers
+            model.add(Flatten())
+            model.add(Dense(128, activation=tf.nn.relu))
+            model.add(Dropout(0.2))
+            model.add(Dense(10,activation=tf.nn.softmax))
 
-        # ----------------------------------------------------------------------
+            # ----------------------------------------------------------------------
 
-        model.compile(optimizer='adam',
-                      loss='sparse_categorical_crossentropy',
-                      metrics=['accuracy'])
-        model.fit(x=x_train,y=y_train, epochs=1)
-        model.save('Awesome first try')
+            model.compile(optimizer='adam',
+                          loss='sparse_categorical_crossentropy',
+                          metrics=['accuracy'])
+            model.fit(x=x_train,y=y_train, epochs=1)
+            model.save('Awesome first try')
 
-        # ----------------------------------------------------------------------
-        '''
+            # ----------------------------------------------------------------------
 
         model = tf.keras.models.load_model("Awesome first try")
         file = png_path
@@ -102,63 +100,6 @@ class MainWindow(QDialog):
         plt.tick_params(bottom=False, left=False, labelbottom=False, labelleft=False)
         plt.imshow(image.reshape(28, 28), cmap='Greys')
         plt.show()
-
-        print(pred.argmax())
-
-        # # TEST
-        # mnist = tf.keras.datasets.mnist
-        # (x_train, y_train), (x_test, y_test) = mnist.load_data()
-        #
-        # # Makes the model way more effective to normalize the data from 0 to 1 instead of 0 to 255
-        # x_train = tf.keras.utils.normalize(x_train, axis=1)
-        # x_test = tf.keras.utils.normalize(x_test, axis=1)
-        #
-        # # if int(train)or not os.path.isfile('Awesome first try'):
-        # if not os.path.isfile('Awesome first try'):
-        #     # Model type
-        #     model = tf.keras.models.Sequential()
-        #
-        #     # 1st layer: to flatten our data and additionally the 1st layer can specify the input
-        #     # Our input shape is an array of 28 by 28 that we'll be no longer needed to provide to the other layers
-        #     model.add(tf.keras.layers.Flatten(input_shape=(28, 28)))
-        #
-        #     # 2nd layer: Define the numbers of "neurones" we'll be
-        #     # using and additionally the function we'd like to apply
-        #     # In this case this is the Rectified Linear Unit
-        #     model.add(tf.keras.layers.Dense(64, activation='relu'))
-        #
-        #     model.add(tf.keras.layers.Dense(10, activation='softmax'))
-        #
-        #     # optimizer='adam': Configure a model for mean-squared error regression.
-        #     #
-        #     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        #     model.fit(x_train, y_train, epochs=3)
-        #     model.save('Awesome first try')
-        #
-        # new_model = tf.keras.models.load_model('Awesome first try')
-        # predictions = new_model.predict(x_test)
-        # val_loss, val_acc = new_model.evaluate(x_test, y_test)
-        #
-        # image = cv2.imread(png_path, cv2.IMREAD_GRAYSCALE)
-        # image = cv2.resize(image, (28, 28))
-        # image = image.astype('float32')
-        # image = image.reshape(1, 28, 28, 1)
-        # image = 255 - image
-        # image /= 255
-        #
-        # plt.imshow(image.reshape(28, 28), cmap='Greys')
-        # plt.show()
-        # pred = new_model.predict(image.reshape(1, 28, 28, 1), batch_size=1)
-
-        # random_num = random.randint(0, 10000)
-        # plt.title(f'Random data chosen: {random_num}/{len(x_test)}\n'
-        #           f'There\'s {(val_acc*100):.2f}% that\'s a: {np.argmax(predictions[0])} or '
-        #           f'{np.argmax(predictions[random_num])}\n')
-        # plt.tick_params(bottom=False, left=False, labelbottom=False, labelleft=False)
-        # plt.imshow(new_array)
-        # plt.show()
-        #Fin TEST
-
         self.close()
 
     def mouseMoveEvent(self, e):
