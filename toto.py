@@ -5,20 +5,20 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from PyQt5.QtGui import QPixmap, QPainter
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QApplication, QLabel, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QDialog, QApplication, QLabel, QGridLayout, QPushButton, QSpacerItem, QSizePolicy
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, Dropout, Flatten, MaxPooling2D
 
 
-def training_model(train=0, epoch=5):
-    """
-    :param train: int 0 or 1
-        Set to 1 if you want to force training or not
-        Note that there will be one if no model found
-    :param epoch: int
-        Defines the number of iterations over the entire input data
-        Note that epoch is only used in case of a training...
-    """
+# def training_model(train=0, epoch=5):
+#     """
+#     :param train: int 0 or 1
+#         Set to 1 if you want to force training or not
+#         Note that there will be one if no model found
+#     :param epoch: int
+#         Defines the number of iterations over the entire input data
+#         Note that epoch is only used in case of a training...
+#     """
 
 
 class MainWindow(QDialog):
@@ -27,15 +27,24 @@ class MainWindow(QDialog):
         super().__init__()
 
         self.label = QLabel()
-        self.button = QPushButton()
-        self.button.setText('Save')
-        self.button.clicked.connect(self.saving_file)
+        button_1 = QPushButton()
+        button_2 = QPushButton()
+        button_3 = QPushButton()
+        button_1.setText('Run')
+        button_2.setText('Refresh')
+        button_3.setText('Exit')
         self.canvas = QPixmap(400, 300)
         self.canvas.fill(Qt.white)
         self.label.setPixmap(self.canvas)
-        layout = QVBoxLayout()
-        layout.addWidget(self.label)
-        layout.addWidget(self.button)
+        button_1.clicked.connect(self.saving_file)
+        button_2.clicked.connect(self.refreshing)
+        button_3.clicked.connect(self.close)
+        layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self.label, 0, 0, 0, 0)
+        layout.addWidget(button_1, 6, 0, 1, 1)
+        layout.addWidget(button_2, 6, 1, 1, 1)
+        layout.addWidget(button_3, 6, 2, 1, 1)
         self.setLayout(layout)
 
         self.last_x, self.last_y = None, None
@@ -45,10 +54,6 @@ class MainWindow(QDialog):
         png_path = os.path.join(os.getcwd(), "my_number.jpg")
         print(png_path)
         print(pixmap.save(png_path, "jpg"))
-        # png_array = cv2.imread(png_path, cv2.IMREAD_GRAYSCALE)
-        # new_array = cv2.resize(png_array, (28, 28))
-        # plt.imshow(new_array, cmap="gray")
-        # plt.show()
 
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
 
@@ -100,7 +105,10 @@ class MainWindow(QDialog):
         plt.tick_params(bottom=False, left=False, labelbottom=False, labelleft=False)
         plt.imshow(image.reshape(28, 28), cmap='Greys')
         plt.show()
-        self.close()
+
+    def refreshing(self):
+        self.label.pixmap().fill(Qt.white)
+        self.update()
 
     def mouseMoveEvent(self, e):
         # First event
